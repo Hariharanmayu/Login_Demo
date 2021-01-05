@@ -1,23 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Login from './LogIn';
+import Createaccound from './CreateNewAccound';
+import Landingpage from "./landingPage";
+import History from './history';
+import PrivateRouter from './PrivateRouter';
+import Course from "./Course";
+import { AuthContext } from "./Auth";
 
-function App() {
+function App(props) {
+  const existingTokens = localStorage.getItem("tokens");
+  const [authTokens, setAuthTokens] = useState(existingTokens);
+
+  const setTokens = (data) => {
+    localStorage.setItem("tokens", JSON.stringify(data));
+    setAuthTokens(data);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
+        <Router history={History} >
+          <Switch>
+            <Route path="/" exact component={Landingpage} />
+            <Route path="/Login" component={Login} />
+            <Route path="/Createaccound" component={Createaccound} />
+            <PrivateRouter path="/Course" component={Course} />
+          </Switch>
+        </Router>
+      </AuthContext.Provider>
     </div>
   );
 }
